@@ -54,20 +54,16 @@ app.delete("/api/cities/:idx", (req, res) => {
   res.status(200).send(cities);
 });
 
-// try {
-//   nonExistentFunction();
-// } catch (error) {
-//   console.error(error);
-//   // expected output: ReferenceError: nonExistentFunction is not defined
-//   // Note - error messages will vary depending on browser
-// }
-
 app.get("/error", (req, res) => {
   console.log("Error Hit");
-  rollbar.info("Error Hit");
-
-  error(() => {});
-
+  rollbar.critical("Error Hit");
+  try {
+    nonExistentFunction();
+  } catch (error) {
+    console.error(error);
+    //   // expected output: ReferenceError: nonExistentFunction is not defined
+    //   // Note - error messages will vary depending on browser
+  }
   res.status(200).send(cities);
 });
 

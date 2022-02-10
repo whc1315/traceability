@@ -12,6 +12,7 @@ const rollbar = new Rollbar({
 });
 
 app.use(express.json());
+app.use(express.static("public"));
 
 const cities = [
   "Portland",
@@ -49,6 +50,23 @@ app.delete("/api/cities/:idx", (req, res) => {
   }
   rollbar.info(`Someone deleted ${cities[+req.params.idx]}`);
   cities.splice(+req.params.idx, 1);
+
+  res.status(200).send(cities);
+});
+
+// try {
+//   nonExistentFunction();
+// } catch (error) {
+//   console.error(error);
+//   // expected output: ReferenceError: nonExistentFunction is not defined
+//   // Note - error messages will vary depending on browser
+// }
+
+app.get("/error", (req, res) => {
+  console.log("Error Hit");
+  rollbar.info("Error Hit");
+
+  error(() => {});
 
   res.status(200).send(cities);
 });

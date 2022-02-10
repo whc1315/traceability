@@ -68,6 +68,20 @@ app.get("/error", (req, res) => {
   return;
 });
 
+app.get("/warn", (req, res) => {
+  console.log("Warning Hit");
+  rollbar.warning("Warning Hit");
+  try {
+    nonExistentFunction();
+  } catch (error) {
+    console.error(error);
+    //   // expected output: ReferenceError: nonExistentFunction is not defined
+    //   // Note - error messages will vary depending on browser
+  }
+  res.sendStatus(404);
+  return;
+});
+
 const port = process.env.PORT || process.env.SERVER_PORT;
 
 app.listen(port, () => console.log(`Server running on ${port}`));

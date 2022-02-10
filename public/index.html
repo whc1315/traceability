@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cities I've Visited</title>
+  </head>
+  <body>
+    <h1>Cities I've Visited List</h1>
+    <form>
+      <input type="text" placeholder="Type City Name Here..." />
+      <button>ADD CITY</button>
+    </form>
+
+    <section></section>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+      const addForm = document.querySelector("form");
+      const nameInput = document.querySelector("input");
+      const container = document.querySelector("section");
+
+      function putTheThingInTheView(res) {
+        container.innerHTML = "";
+        nameInput.value = "";
+
+        res.data.forEach((cityName, index) => {
+          container.innerHTML += `<p name=${index}>${cityName}</p>`;
+        });
+
+        document.querySelectorAll("p").forEach((element) => {
+          const theIndexValue = element.getAttribute("name");
+
+          element.addEventListener("click", () => {
+            axios.delete(`/api/cities/${theIndexValue}`).then((res) => {
+              putTheThingInTheView(res);
+            });
+          });
+        });
+      }
+
+      function submitHandler(evt) {
+        evt.preventDefault();
+
+        axios
+          .post("/api/cities", { name: nameInput.value })
+          .then((res) => {
+            putTheThingInTheView(res);
+          })
+          .catch((err) => {
+            nameInput.value = "";
+
+            const notif = document.createElement("aside");
+            notif.innerHTML = `<p>${err.response.data}</p>
+                    <button class="close">close</button>`;
+            document.body.appendChild(notif);
+
+            document.querySelectorAll(".close").forEach((btn) => {
+              btn.addEventListener("click", (e) => {
+                e.target.parentNode.remove();
+              });
+            });
+          });
+      }
+
+      // get cities list on initial load
+      axios.get("/api/cities").then((res) => {
+        putTheThingInTheView(res);
+      });
+
+      addForm.addEventListener("submit", submitHandler);
+    </script>
+  </body>
+</html>
